@@ -17,15 +17,20 @@ public class User {
         }
     }
 
-    public boolean register(String username, String password) {
-        boolean result = false;
+    public int register(String username, String password) {
+        int result = 1;
         try {
-            database.executeUpdate("DELETE FROM users WHERE username = '" + username + "';");
-            database.executeUpdate("INSERT INTO users (username, password) VALUES ('" + username
-                    + "', '" + password + "');");
-            result = true;
+            ResultSet resultset = database.executeQuery("select * from users where username = '" + username + "';");
+            if (resultset.next()) {
+                result = 2;
+            }else {
+                database.executeUpdate("DELETE FROM users WHERE username = '" + username + "';");
+                database.executeUpdate("INSERT INTO users (username, password) VALUES ('" + username
+                        + "', '" + password + "');");
+                result = 0;
+            }
         } catch (SQLException throwables) {
-            result = false;
+            result = 1;
             throwables.printStackTrace();
         } finally {
             //database.close();

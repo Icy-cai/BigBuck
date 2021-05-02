@@ -25,10 +25,12 @@ public class register extends HttpServlet {
             //Connect to Database
             //input code. If succeed
             User user = new User();
-            boolean ret = user.register(username, passwd);
-            if (ret) {
+            int ret = user.register(username, passwd);
+            if (ret == 0) {
                 resp.sendRedirect("login2.html");
-            }else {
+            } else if (ret == 2) {
+                resp.getWriter().println("User already exist");
+            } else {
                 resp.getWriter().println("Failed registration");
             }
         }else {

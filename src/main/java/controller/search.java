@@ -10,6 +10,7 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import static yahoofinance.histquotes.Interval.DAILY;
+import static yahoofinance.histquotes.Interval.MONTHLY;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,10 +26,10 @@ public class search extends HttpServlet{
         String stockname = req.getParameter("stockname");
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
-        from.add(Calendar.YEAR, -1);
+        from.add(Calendar.YEAR, -5);
 
         Stock stock = YahooFinance.get(stockname);
-        List<HistoricalQuote> past = stock.getHistory(from, to, DAILY);
+        List<HistoricalQuote> past = stock.getHistory(from, to, MONTHLY);
         String json = new Gson().toJson(past);
         resp.getWriter().println(json);
     }

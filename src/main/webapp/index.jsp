@@ -60,30 +60,34 @@
                 %>
                 Hi <%out.print(username);%>
                 <a id="HyperLinkLogout" href="./logout">Logout</a>
+            <br /><br />
+                <h3>SPY:<%out.print(YahooFinance.get("spy").getQuote().getPrice());%></h3>
                 <%} else {%>
                 <a id="HyperLink7" href="login2.html">Login</a>
                 <a id="HyperLink7" href="newUser2.html">Sign Up</a>
                 <%}%>
-                <br /><br />
 
             <h3>Portfolio Information</h3>
             <p>Userid:<span id="username"><%out.print(username);%></span></p>
             <%
-                BigDecimal total = new BigDecimal(0);
+                double total = 0;
+                double cash = 0;
                 if (username != null && !username.isEmpty()) {
                     User user = new User();
                     int userid = user.GetUserid(username);
+                    cash = 1000000;
                     Dictionary<String, Integer> stocks = user.GetStocks(userid);
                     for (Enumeration k = stocks.keys(); k.hasMoreElements(); ) {
                         String stockname = (String) k.nextElement();
                         int sharesize = stocks.get(stockname);
                         Stock stock = YahooFinance.get(stockname);
-                        StockQuote price = stock.getQuote();
-                        total.add(price.getPrice().multiply(new BigDecimal(sharesize)));
+                        double price = stock.getQuote().getPrice().doubleValue();
+                        total += sharesize * price;
                     }
                 }
             %>
-            <p>Portfolio value:<span id="portfolio"><%out.print(total);%></span></p>
+            <p>Cash: <span>$<%out.print(cash);%></span></p>
+            <p>Portfolio value:<span id="portfolio">$<%out.print(total);%></span></p>
 
             <head>
                 <style>
@@ -111,6 +115,9 @@
                 if (username != null && !username.isEmpty()) {
             %>
             <table id="table">
+                <tr>
+                    <td>Stock</td><td>shares</td><td>Current Price</td>
+                </tr>
             <%
                 User user = new User();
                 int userid = user.GetUserid(username);
@@ -118,9 +125,11 @@
                 for (Enumeration k = stocks.keys(); k.hasMoreElements();) {
                     String stockname = (String) k.nextElement();
                     int sharesize = stocks.get(stockname);
+                    Stock stock = YahooFinance.get(stockname);
+                    double price = stock.getQuote().getPrice().doubleValue();
                     %>
             <tr>
-                <td><%out.print(stockname);%></td><td><%out.print(sharesize);%></td>
+                <td><%out.print(stockname);%></td><td><%out.print(sharesize);%></td><td><%out.print(price);%></td>
             </tr>
             <%
                 }
