@@ -6,6 +6,7 @@
 <%@ page import="yahoofinance.YahooFinance" %>
 <%@ page import="yahoofinance.quotes.stock.StockQuote" %>
 <%@ page import="java.math.BigDecimal" %>
+<%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
@@ -111,16 +112,17 @@
             <body>
 
             <h5>Detailed Information</h5>
+            <table id="table">
             <%
                 if (username != null && !username.isEmpty()) {
-            %>
-            <table id="table">
+                User user = new User();
+                int userid = user.GetUserid(username);
+                if (userid != 1) {
+                    %>
                 <tr>
                     <td>Stock</td><td>shares</td><td>Current Price</td>
                 </tr>
             <%
-                User user = new User();
-                int userid = user.GetUserid(username);
                 Dictionary<String, Integer> stocks = user.GetStocks(userid);
                 for (Enumeration k = stocks.keys(); k.hasMoreElements();) {
                     String stockname = (String) k.nextElement();
@@ -132,10 +134,29 @@
                 <td><%out.print(stockname);%></td><td><%out.print(sharesize);%></td><td><%out.print(price);%></td>
             </tr>
             <%
+                    }
+                } else {
+            %>
+                <tr>
+                    <td>Username</td><td>Stock</td><td>shares</td><td>Current Price</td>
+                </tr>
+                <%
+                    ArrayList<Dictionary<String, String>> allStocks = user.GetAllStocks();
+                    for (int i = 0; i < allStocks.size(); ++i) {
+                        String owner = allStocks.get(i).get("username");
+                        String stockname = allStocks.get(i).get("stock");
+                        String sharesize = allStocks.get(i).get("sharesize");
+                        double price = YahooFinance.get(stockname).getQuote().getPrice().doubleValue();
+                        %>
+                <tr>
+                    <td><%out.print(owner);%></td><td><%out.print(stockname);%></td><td><%out.print(sharesize);%></td><td><%out.print(price);%></td>
+                </tr>
+                <%
+                    }
                 }
             %>
-            </table>
 <%}%>
+            </table>
             </body>
 
 

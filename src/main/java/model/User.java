@@ -2,6 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -95,6 +96,26 @@ public class User {
         }
         return stocks;
     }
+
+    public ArrayList<Dictionary<String, String>> GetAllStocks() {
+        ArrayList<Dictionary<String, String>> allStocks = new ArrayList<Dictionary<String, String>>();
+        try {
+            ResultSet resultset = database.executeQuery("SELECT users.username, Assets.Asset, Assets.Sharesize FROM Assets join users on users.userid = Assets.UserID;");
+            while (resultset.next()) {
+                Dictionary<String, String> oneUser = new Hashtable<String, String>();
+                String username = resultset.getString("username");
+                String stock = resultset.getString("Asset");
+                String sharesize = Integer.toString(resultset.getInt("Sharesize"));
+                oneUser.put("username", username);
+                oneUser.put("stock", stock);
+                oneUser.put("sharesize", sharesize);
+                allStocks.add(oneUser);
+            }
+        } catch (SQLException var10) {
+
+        } finally {
+            //database.close();
+        }
+        return allStocks;
+    }
 }
-
-

@@ -56,7 +56,11 @@ public class Transaction {
                 result = false;
             } else {
                 int sharesize = resultset.getInt("Sharesize") - Sharesize;
-                database.executeUpdate("UPDATE Assets set Sharesize=" + sharesize + " where UserID = " + userID + " and Asset = '" + Stock + "';");
+                if (sharesize > 0) {
+                    database.executeUpdate("UPDATE Assets set Sharesize=" + sharesize + " where UserID = " + userID + " and Asset = '" + Stock + "';");
+                } else {
+                    database .executeUpdate("delete from Assets where UserID = " + userID + " and Asset = '" + Stock + "';");
+                }
                 result = true;
             }
         } catch (SQLException throwables) {
